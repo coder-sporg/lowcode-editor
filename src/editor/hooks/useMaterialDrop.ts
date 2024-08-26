@@ -1,4 +1,4 @@
-import { message } from "antd"
+// import { message } from "antd"
 import { useDrop } from "react-dnd"
 import { useComponentsStore } from "../store/components"
 import { useComponentConfigStore } from "../store/component-config"
@@ -22,7 +22,7 @@ export function useMaterialDrop(accept: string[], id: number) {
         desc: config.desc,
         props: config.defaultProps
       }, id)
-      message.success(item.type)
+      // message.success(item.type)
     },
     collect: (monitor) => ({
       canDrop: monitor.canDrop()

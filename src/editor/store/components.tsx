@@ -1,3 +1,4 @@
+import { CSSProperties } from "react"
 import { create } from "zustand"
 
 export interface Component {
@@ -5,6 +6,7 @@ export interface Component {
   name: string
   props: any
   desc: string
+  styles?: CSSProperties
   children?: Component[]
   parentId?: number
 }
@@ -18,7 +20,9 @@ interface State {
 interface Action {
   addComponent: (component: Component, parentId?: number) => void
   deleteComponent: (componentId: number) => void
-  updateComponent: (componentId: number, props: any) => void
+  updateComponentProps: (componentId: number, props: any) => void
+  // css 编辑器的样式修改，直接替换
+  updateComponentStyles: (componentId: number, styles: CSSProperties, replace?: boolean) => void
   setCurComponentId: (componentId: number | null) => void
 }
 
@@ -93,7 +97,7 @@ export const useComponentsStore = create<State & Action>(
         }
       }
     },
-    updateComponent: (componentId, props) => set((state) => {
+    updateComponentProps: (componentId, props) => set((state) => {
       const component = getComponentById(state.components, componentId)
 
       if(component) {
@@ -103,6 +107,16 @@ export const useComponentsStore = create<State & Action>(
       }
 
       return { components: [...state.components] }
+    }),
+    updateComponentStyles: (componentId, styles, replace) => set(state => {
+      const component = getComponentById(state.components, componentId)
+
+      if(component) {
+        component.styles = replace ? { ...styles } : { ...component.styles, ...styles }
+      }
+      return {
+        components: [...state.components]
+      }
     })
   }))
 )

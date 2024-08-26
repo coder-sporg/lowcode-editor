@@ -38,7 +38,13 @@ function SelectMask({
 
   // 解决新增组件选中框高度不够问题
   useEffect(() => {
-    updatePosition();
+    // 加延时：因为修改css样式到样式生效需要一段时间！！
+    const timer = setTimeout(() => {
+      updatePosition();
+    }, 200);
+    return () => {
+      clearTimeout(timer)
+    }
   }, [components]);
 
   // 窗口大小改变，更新位置
