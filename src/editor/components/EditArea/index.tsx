@@ -1,6 +1,7 @@
-import React from "react"
+import React, { MouseEventHandler, useState } from "react"
 import { Component, useComponentsStore } from "../../store/components"
 import { useComponentConfigStore } from "../../store/component-config"
+import HoverMask from "../HoverMask"
 
 export function EditArea() {
   const { components } = useComponentsStore()
@@ -22,12 +23,39 @@ export function EditArea() {
     })
   }
 
-  return <div className="h-[100%]">
-    {/* <pre>
-      {
-        JSON.stringify(components, null, 2)
+  // 处理hover效果
+  const [hoverComponentId, setHoverComponentId] = useState<number>()
+  const handleMouseOver: MouseEventHandler = (e) => {
+    // https://developer.mozilla.org/zh-CN/docs/Web/API/Event/composedPath
+    // 触发事件到html根元素的路径
+    const path = e.nativeEvent.composedPath()
+
+    for (let i = 0; i < path.length; i++) {
+      const ele = path[i] as HTMLElement;
+
+      const componentId = ele.dataset?.componentId
+      if(componentId) {
+        setHoverComponentId(+componentId)
+        return
       }
-    </pre> */}
+    }
+  }
+
+  return <div
+      className="h-[100%] edit-area"
+      onMouseOver={handleMouseOver}
+      onMouseLeave={() => setHoverComponentId(undefined)}
+    >
     { renderComponents(components) }
+    {
+      hoverComponentId && (
+        <HoverMask
+          containerClassName="edit-area"
+          componentId={hoverComponentId}
+          portalWrapperClassName="portal-wrapper"
+        />
+      )
+    }
+    <div className="portal-wrapper"></div>
   </div>
 }
