@@ -15,11 +15,12 @@ export function useMaterialDrop(accept: string[], id: number) {
       // 已经做拖拽的不处理
       if(didDrop) return
 
-      const props = componentConfig[item.type]
+      const config = componentConfig[item.type]
       addComponent({
         id: new Date().getTime(),
         name: item.type,
-        props
+        desc: config.desc,
+        props: config.defaultProps
       }, id)
       message.success(item.type)
     },

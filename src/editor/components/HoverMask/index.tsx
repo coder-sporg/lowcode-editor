@@ -110,7 +110,7 @@ function HoverMask({ portalWrapperClassName, containerClassName, componentId }: 
               whiteSpace: 'nowrap',
             }}
           >
-            {curComponent?.name}
+            {curComponent?.desc}
           </div>
       </div>
     </>

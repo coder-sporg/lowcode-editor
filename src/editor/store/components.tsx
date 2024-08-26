@@ -4,18 +4,22 @@ export interface Component {
   id: number
   name: string
   props: any
+  desc: string
   children?: Component[]
   parentId?: number
 }
 
 interface State {
   components: Component[]
+  curComponentId?: null | number
+  curComponent: Component | null
 }
 
 interface Action {
   addComponent: (component: Component, parentId?: number) => void
   deleteComponent: (componentId: number) => void
   updateComponent: (componentId: number, props: any) => void
+  setCurComponentId: (componentId: number | null) => void
 }
 
 export const useComponentsStore = create<State & Action>(
@@ -28,6 +32,14 @@ export const useComponentsStore = create<State & Action>(
         desc: '页面'
       }
     ],
+    curComponentId: null,
+    curComponent: null,
+    setCurComponentId: (componentId) => set(state => {
+      return {
+        curComponentId: componentId,
+        curComponent: getComponentById(state.components, componentId)
+      }
+    }),
     addComponent: (component, parentId) => set((state) => {
       // console.log("🚀 ~ addComponent: ~ state:", state) // get() === state
       if(parentId) {

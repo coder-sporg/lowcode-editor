@@ -2,10 +2,11 @@ import { useDrag } from "react-dnd"
 
 export interface MaterialItemProps {
   name: string
+  desc: string
 }
 
 export function MaterialItem(props: MaterialItemProps) {
-  const { name } = props
+  const { name, desc } = props
 
   const [, drag] = useDrag({
     // 当前drag元素的标识，drop的时候根据这个来决定是否accept
@@ -29,6 +30,6 @@ export function MaterialItem(props: MaterialItemProps) {
       hover:bg-[#ccc]
     "
   >
-  { name }
+  { desc }
 </div>
 }
