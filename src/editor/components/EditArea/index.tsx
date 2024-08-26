@@ -1,6 +1,6 @@
 import React from "react"
 import { Component, useComponentsStore } from "../../store/components"
-import { useComponentConfigStore } from "../../store/conponent-config"
+import { useComponentConfigStore } from "../../store/component-config"
 
 export function EditArea() {
   const { components } = useComponentsStore()

@@ -1,35 +1,8 @@
-import { useComponentsStore } from "../../store/components";
-import { useComponentConfigStore } from "../../store/conponent-config";
-import { useDrop } from "react-dnd";
 import { CommonComponentProps } from "../../interface";
-import { message } from "antd";
+import { useMaterialDrop } from "../../hooks/useMaterialDrop";
 
 const Container = ({ id, children }: CommonComponentProps) => {
-  const { addComponent } = useComponentsStore();
-  const { componentConfig } = useComponentConfigStore();
-
-  const [{ canDrop }, drop] = useDrop(() => ({
-    accept: ["Button", "Container"],
-    drop: (item: { type: string }, monitor) => {
-      const didDrop = monitor.didDrop()
-      // container 中拖拽时，page不做处理
-      if(didDrop) return
-
-      const props = componentConfig[item.type];
-      addComponent(
-        {
-          id: new Date().getTime(),
-          name: item.type,
-          props,
-        },
-        id
-      );
-      message.success(item.type);
-    },
-    collect: (monitor) => ({
-      canDrop: monitor.canDrop(),
-    }),
-  }));
+  const { canDrop, drop } = useMaterialDrop(['Button', 'Container'], id)
 
   return (
     <div

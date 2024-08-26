@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { useComponentConfigStore } from "../../store/conponent-config"
+import { useComponentConfigStore } from "../../store/component-config"
 import { MaterialItem } from "../Materialtem"
 
 export function Material() {
