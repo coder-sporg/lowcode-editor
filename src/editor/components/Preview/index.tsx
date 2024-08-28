@@ -1,11 +1,40 @@
 import React from "react";
 import { useComponentConfigStore } from "../../store/component-config";
 import { Component, useComponentsStore } from "../../store/components";
+import { message } from "antd";
 
 export function Preview() {
   const { components } = useComponentsStore();
   const { componentConfig } = useComponentConfigStore();
 
+  // 绑定事件
+  function handleEvent(component: Component) {
+    const props: Record<string, any> = {}
+
+    componentConfig[component.name].events?.forEach(event => {
+      const eventConfig = component.props[event.name]
+
+      if(eventConfig) {
+        const { type } = eventConfig
+        props[event.name] = () => {
+          if(type === 'goToLink' && eventConfig.url) {
+            // window.location.href = eventConfig.url
+            window.open(eventConfig.url)
+          } else if(type === 'showMessage' && eventConfig.config) {
+            if(eventConfig.config.type === 'success') {
+              message.success(eventConfig.config.text)
+            } else if(eventConfig.config.type === 'error') {
+              message.error(eventConfig.config.text)
+            }
+          }
+        }
+      }
+    })
+
+    return props
+  }
+
+  // 渲染组件
   function renderComponents(components: Component[]): React.ReactNode {
     return components.map((component: Component) => {
       const config = componentConfig?.[component.name];
@@ -23,6 +52,8 @@ export function Preview() {
           styles: component.styles,
           ...config.defaultProps,
           ...component.props,
+          // 绑定事件
+          ...handleEvent(component)
         },
         renderComponents(component.children || [])
       );

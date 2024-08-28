@@ -6,12 +6,14 @@ export interface ButtonProps {
   id: number // 用于处理hover 和 click
   type: ButtonType
   text: string
-  styles: CSSProperties
+  styles: CSSProperties,
+  [key: string]: any
 }
 
-const Button = ({ type, text, styles }: ButtonProps) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const Button = ({ id, type, text, styles, ...props }: ButtonProps) => {
   return (
-    <AntdButton type={type} style={styles}>{ text }</AntdButton>
+    <AntdButton type={type} style={styles} {...props}>{ text }</AntdButton>
   )
 }
 
