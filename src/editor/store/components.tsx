@@ -12,12 +12,14 @@ export interface Component {
 }
 
 interface State {
+  mode: 'edit' | 'preview'
   components: Component[]
   curComponentId?: null | number
   curComponent: Component | null
 }
 
 interface Action {
+  setMode: (mode: State['mode']) => void
   addComponent: (component: Component, parentId?: number) => void
   deleteComponent: (componentId: number) => void
   updateComponentProps: (componentId: number, props: any) => void
@@ -28,6 +30,7 @@ interface Action {
 
 export const useComponentsStore = create<State & Action>(
   ((set, get) => ({
+    mode: 'edit',
     components: [
       {
         id: 1,
@@ -38,6 +41,7 @@ export const useComponentsStore = create<State & Action>(
     ],
     curComponentId: null,
     curComponent: null,
+    setMode: (mode) => set({mode}), // 修改模式
     setCurComponentId: (componentId) => set(state => {
       return {
         curComponentId: componentId,
