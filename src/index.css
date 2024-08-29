@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+
+@layer components {
+    /* 修改特定 antD 组件样式 */
+    .component-event .ant-collapse-header {
+      @apply items-center !important;
+    }
+  }
+  
+
 .monaco-editor .suggestions-widget {
     z-index: 10000;
 }

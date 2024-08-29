@@ -1,36 +1,50 @@
 import { Input, Select } from "antd";
-import { ComponentEvent } from "../../../store/component-config";
 import { useComponentsStore } from "../../../store/components";
+import { useState } from "react";
 
-function ShowMessage(props: { event: ComponentEvent }) {
-  const { event } = props
+export interface ShowMessageConfig {
+  type: 'showMessage',
+  config: {
+    type: 'success' | 'error'
+    text: string
+  }
+}
 
-  const { curComponent, curComponentId, updateComponentProps } = useComponentsStore()
+export interface ShowMessageProps {
+  value?: ShowMessageConfig['config']
+  onChange?: (config: ShowMessageConfig) => void
+}
 
-  function messageTypeChange(eventName: string, value: string) {
+function ShowMessage(props: ShowMessageProps) {
+  const { value, onChange } = props
+
+  const { curComponentId } = useComponentsStore()
+  const [type, setType] = useState<'success' | 'error'>(value?.type || 'success');
+  const [text, setText] = useState<string>(value?.text || '');
+
+  function messageTypeChange(value: 'success' | 'error') {
     if(!curComponentId) return
 
-    updateComponentProps(curComponentId, {
-      [event.name]: {
-        ...curComponent?.props?.[event.name],
-        config: {
-          ...curComponent?.props?.[eventName]?.config,
-          type: value
-        }
+    setType(value)
+    onChange?.({
+      type: 'showMessage',
+      config: {
+        type: value,
+        text
       }
     })
   }
 
-  function messageTextChange(eventName: string, value: string) {
+  function messageTextChange(value: string) {
     if(!curComponentId) return
 
-    updateComponentProps(curComponentId, {
-      [event.name]: {
-        ...curComponent?.props?.[event.name],
-        config: {
-          ...curComponent?.props?.[eventName]?.config,
-          text: value
-        }
+    setText(value)
+
+    onChange?.({
+      type: 'showMessage',
+      config: {
+        text: value,
+        type
       }
     })
   }
@@ -40,23 +54,23 @@ function ShowMessage(props: { event: ComponentEvent }) {
       <div>类型：</div>
       <div>
         <Select
-          style={{ width: 160 }}
+          style={{ width: 500 }}
           options={[
             { label: '成功', value: 'success' },
             { label: '失败', value: 'error' }
           ]}
-          onChange={value => {messageTypeChange(event.name, value)}}
-          value={curComponent?.props[event.name]?.config?.type}
+          onChange={value => {messageTypeChange(value)}}
+          value={type}
         />
       </div>
     </div>
-    <div className="flex items-center gap-[10px] mt-[10px]">
+    <div className="flex items-center gap-[10px] mt-[30px]">
       <div>文本：</div>
       <div>
         <Input
-          style={{ width: 160 }}
-          onChange={e => messageTextChange(event.name, e.target.value)}
-          value={curComponent?.props?.[event.name]?.config?.text}
+          style={{ width: 500 }}
+          onChange={e => messageTextChange(e.target.value)}
+          value={text}
         />
       </div>
     </div>
