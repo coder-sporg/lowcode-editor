@@ -41,7 +41,7 @@ export function CustomJS(props: CustomJSProps) {
   };
 
   return (
-    <div className="mt-[40px]">
+    <div className="mt-[20px]">
       <div className="flex items-start gap-[20px]">
         <div>自定义 JS</div>
         <div>

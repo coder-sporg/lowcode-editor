@@ -34,7 +34,7 @@ function GoToLink(props: GoToLinkProps) {
   }
 
   return (
-    <div className="mt-[10px]">
+    <div className="mt-[20px]">
       <div className="flex items-center gap-[10px]">
         <div>链接：</div>
         <div>

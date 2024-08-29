@@ -5,6 +5,8 @@ import ButtonDev from "../materials/Button/dev"
 import ButtonProd from "../materials/Button/prod"
 import PageDev from "../materials/Page/dev"
 import PageProd from "../materials/Page/prod"
+import ModalDev from "../materials/Modal/dev"
+import ModalProd from "../materials/Modal/prod"
 
 export interface ComponentSetter {
   name: string;
@@ -14,6 +16,11 @@ export interface ComponentSetter {
 }
 
 export interface ComponentEvent {
+  name: string
+  label: string
+}
+
+export interface ComponentMethod {
   name: string
   label: string
 }
@@ -28,6 +35,8 @@ export interface ComponentConfig {
   stylesSetter?: ComponentSetter[]
   // 事件绑定
   events?: ComponentEvent[]
+  // 组件方法
+  methods?: ComponentMethod[]
   // component: any
   dev: any // 编辑模式
   prod: any // 预览模式
@@ -44,6 +53,42 @@ interface Action {
 export const useComponentConfigStore = create<State & Action>(set => {
   return {
     componentConfig: {
+      Modal: {
+        name: 'Modal',
+        desc: '弹窗',
+        defaultProps: {
+          title: '弹窗'
+        },
+        setter: [
+          {
+            name: 'title',
+            label: '标题',
+            type: 'input'
+          }
+        ],
+        events: [
+          {
+            name: 'onOk',
+            label: '确认事件'
+          },
+          {
+            name: 'onCancel',
+            label: '取消事件'
+          }
+        ],
+        methods: [
+          {
+            name: 'open',
+            label: '打开弹窗'
+          },
+          {
+            name: 'close',
+            label: '关闭弹窗'
+          }
+        ],
+        dev: ModalDev,
+        prod: ModalProd
+      },
       Container: {
         name: 'Container',
         defaultProps: {},

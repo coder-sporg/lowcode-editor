@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useComponentConfigStore } from "../../store/component-config";
 import { Component, useComponentsStore } from "../../store/components";
 import { message } from "antd";
-import { ActionConfig } from "../Setting/actions/ActionModal";
+import { ActionConfig } from "../Setting/ActionModal";
 
 export function Preview() {
   const { components } = useComponentsStore();
   const { componentConfig } = useComponentConfigStore();
+
+  const componentRefs = useRef<Record<string, any>>({})
 
   // 绑定事件
   function handleEvent(component: Component) {
@@ -37,6 +39,12 @@ export function Preview() {
                   message.success(content)
                 }
               })
+            } else if(action.type === 'componentMethod') {
+              const component = componentRefs.current[action.config.componentId]
+
+              if(component) {
+                component[action.config.method]?.()
+              }
             }
           })
         }
@@ -62,6 +70,9 @@ export function Preview() {
           id: component.id,
           name: component.name,
           styles: component.styles,
+          // 使用了froward的组件才给ref属性
+          ref: config.prod?.$$typeof === Symbol.for('react.forward_ref') ?
+                (ref: Record<string, any>) => { componentRefs.current[component.id] = ref; } : undefined,
           ...config.defaultProps,
           ...component.props,
           // 绑定事件

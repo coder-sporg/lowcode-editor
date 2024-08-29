@@ -57,7 +57,7 @@ function ShowMessage(props: ShowMessageProps) {
     })
   }
 
-  return <div className="mt-[10px]">
+  return <div className="mt-[20px]">
     <div className="flex items-center gap-[10px]">
       <div>类型：</div>
       <div>

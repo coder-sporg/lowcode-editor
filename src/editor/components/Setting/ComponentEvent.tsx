@@ -1,13 +1,13 @@
 import { Button, Collapse, CollapseProps } from "antd"
 import { useComponentConfigStore } from "../../store/component-config"
 import type { ComponentEvent } from "../../store/component-config"
-import { useComponentsStore } from "../../store/components"
+import { getComponentById, useComponentsStore } from "../../store/components"
 import { useState } from "react"
-import ActionModal, { ActionConfig } from "./actions/ActionModal"
+import ActionModal, { ActionConfig } from "./ActionModal"
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons"
 
 export function ComponentEvent() {
-  const { curComponent, curComponentId, updateComponentProps } = useComponentsStore()
+  const { curComponent, curComponentId, updateComponentProps, components } = useComponentsStore()
   const { componentConfig } = useComponentConfigStore()
 
   // 控制弹窗的显示与隐藏
@@ -110,7 +110,24 @@ export function ComponentEvent() {
               }
               {
                 item.type === 'customJS' ? <div className='border border-[#aaa] m-[10px] p-[10px] relative'>
-                  <div className='text-[blue]'>自定义JS</div>
+                  <div className='text-[blue]'>自定义 JS</div>
+                  <div style={{ position: 'absolute', top: 10, right: 30, cursor: 'pointer' }}
+                    onClick={() => editAction(item, index)}
+                  >
+                    <EditOutlined />
+                  </div>
+                  <div style={{ position: 'absolute', top: 10, right: 10, cursor: 'pointer' }}
+                    onClick={() => deleteAction(event, index)}>
+                    <DeleteOutlined />
+                  </div>
+                </div> : null
+              }
+              {
+                item.type === 'componentMethod' ? <div className='border border-[#aaa] m-[10px] p-[10px] relative'>
+                  <div className='text-[blue]'>组件方法</div>
+                  <div>{getComponentById(components, item.config.componentId)?.desc}</div>
+                  <div>{item.config.componentId}</div>
+                  <div>{item.config.method}</div>
                   <div style={{ position: 'absolute', top: 10, right: 30, cursor: 'pointer' }}
                     onClick={() => editAction(item, index)}
                   >
