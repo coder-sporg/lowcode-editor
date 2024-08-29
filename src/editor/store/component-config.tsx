@@ -7,6 +7,10 @@ import PageDev from "../materials/Page/dev"
 import PageProd from "../materials/Page/prod"
 import ModalDev from "../materials/Modal/dev"
 import ModalProd from "../materials/Modal/prod"
+import TableDev from "../materials/Table/dev"
+import TableProd from "../materials/Table/prod"
+import TableColumnDev from "../materials/TableColumn/dev"
+import TableColumnProd from "../materials/TableColumn/prod"
 
 export interface ComponentSetter {
   name: string;
@@ -143,6 +147,57 @@ export const useComponentConfigStore = create<State & Action>(set => {
         ],
         dev: ButtonDev,
         prod: ButtonProd
+      },
+      Table: {
+        name: 'Table',
+        defaultProps: {},
+        desc: '表格',
+        setter: [
+          {
+            name: 'url',
+            label: 'url',
+            type: 'input'
+          }
+        ],
+        dev: TableDev,
+        prod: TableProd
+      },
+      TableColumn: {
+        name: 'TableColumn',
+        desc: '表格列',
+        defaultProps: {
+          title: '列名',
+          dataIndex: `col_${new Date().getTime()}`
+        },
+        setter: [
+          {
+            name: 'type',
+            label: '类型',
+            type: 'select',
+            options: [
+              {
+                label: '文本',
+                value: 'text'
+              },
+              {
+                label: '日期',
+                value: 'date'
+              }
+            ]
+          },
+          {
+            name: 'title',
+            label: '标题',
+            type: 'input'
+          },
+          {
+            name: 'dataIndex',
+            label: '字段',
+            type: 'input'
+          }
+        ],
+        dev: TableColumnDev,
+        prod: TableColumnProd
       },
       Page: {
         name: 'Page',
