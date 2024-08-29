@@ -1,50 +1,13 @@
-# React + TypeScript + Vite
+# 低代码编辑器
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 技术
+- 基于 `react-dnd` 实现了拖拽，可以拖拽物料到组件树的任意层级
+- 通过 `zustand` 实现了全局 store 的存储，比如组件树、组件配置等，并用 persist 中间件做了持久化
+- 通过 `tailwind` 来写样式，不需要写 css 文件
+- 通过 `getBoundingClientRect` 拿到 hover、click 的组件边界，动态计算编辑框位置
+- 通过 json 递归渲染组件，基于 `React.createElement` 来修改组件 `props`
+- 通过 ref 实现了组件联动，组件通过 `forwardRef + useImperativeHandle` 暴露方法，然后全局注册，供别的组件调用
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+## 环境
+- node: 18.20
+- pnpm: 9.6.0
