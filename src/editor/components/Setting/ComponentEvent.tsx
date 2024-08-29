@@ -3,10 +3,8 @@ import { useComponentConfigStore } from "../../store/component-config"
 import type { ComponentEvent } from "../../store/component-config"
 import { useComponentsStore } from "../../store/components"
 import { useState } from "react"
-import ActionModal from "./actions/ActionModal"
-import { GoToLinkConfig } from "./actions/GoToLink"
-import { ShowMessageConfig } from "./actions/ShowMessage"
-import { DeleteOutlined } from "@ant-design/icons"
+import ActionModal, { ActionConfig } from "./actions/ActionModal"
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons"
 
 export function ComponentEvent() {
   const { curComponent, curComponentId, updateComponentProps } = useComponentsStore()
@@ -15,7 +13,9 @@ export function ComponentEvent() {
   // 控制弹窗的显示与隐藏
   const [actionModalOpen, setActionModalOpen] = useState(false);
   const [curEvent, setCurEvent] = useState<ComponentEvent>();
-
+  const [curAction, setCurAction] = useState<ActionConfig>()
+  // 记录当前修改action的索引，用于判断新增还是更新
+  const [curActionIndex, setCurActionIndex] = useState<number>();
 
   if(!curComponent) return null
 
@@ -47,6 +47,14 @@ export function ComponentEvent() {
     </Button>
   }
 
+  // 编辑action
+  const editAction = (action: ActionConfig, index: number) => {
+    if(!curComponent) return
+    setCurAction(action)
+    setCurActionIndex(index)
+    setActionModalOpen(true)
+  }
+
   // 删除action
   const deleteAction = (event: ComponentEvent, index: number) => {
     if(!curComponent) return
@@ -66,13 +74,18 @@ export function ComponentEvent() {
       label: event.label,
       children: <div>
         {
-          (curComponent.props[event.name]?.actions || []).map((item: GoToLinkConfig | ShowMessageConfig, index: number) => {
+          (curComponent.props[event.name]?.actions || []).map((item: ActionConfig, index: number) => {
             return <div key={index}>
               {
                 item.type === 'goToLink' ? <div className='border border-[#aaa] m-[10px] p-[10px] relative'>
                   <div className='text-[blue]'>跳转链接</div>
                   <div>{item.url}</div>
-                  <div 
+                  <div style={{ position: 'absolute', top: 10, right: 30, cursor: 'pointer' }}
+                    onClick={() => editAction(item, index)}
+                  >
+                    <EditOutlined />
+                  </div>
+                  <div
                     style={{ position: 'absolute', top: 10, right: 10, cursor: 'pointer' }}
                     onClick={() => deleteAction(event, index)}>
                     <DeleteOutlined />
@@ -81,9 +94,28 @@ export function ComponentEvent() {
               }
               {
                 item.type === 'showMessage' ? <div className='border border-[#aaa] m-[10px] p-[10px] relative'>
-                  <div className='text-[blue]'>消息弹窗</div>
+                  <div className='text-[blue]'>消息提示</div>
                   <div>{item.config.type}</div>
                   <div>{item.config.text}</div>
+                  <div style={{ position: 'absolute', top: 10, right: 30, cursor: 'pointer' }}
+                    onClick={() => editAction(item, index)}
+                  >
+                    <EditOutlined />
+                  </div>
+                  <div style={{ position: 'absolute', top: 10, right: 10, cursor: 'pointer' }}
+                    onClick={() => deleteAction(event, index)}>
+                    <DeleteOutlined />
+                  </div>
+                </div> : null
+              }
+              {
+                item.type === 'customJS' ? <div className='border border-[#aaa] m-[10px] p-[10px] relative'>
+                  <div className='text-[blue]'>自定义JS</div>
+                  <div style={{ position: 'absolute', top: 10, right: 30, cursor: 'pointer' }}
+                    onClick={() => editAction(item, index)}
+                  >
+                    <EditOutlined />
+                  </div>
                   <div style={{ position: 'absolute', top: 10, right: 10, cursor: 'pointer' }}
                     onClick={() => deleteAction(event, index)}>
                     <DeleteOutlined />
@@ -102,17 +134,31 @@ export function ComponentEvent() {
   })
 
   // 处理弹窗确认
-  function handleModelOk(config?: GoToLinkConfig | ShowMessageConfig) {
+  function handleModelOk(config?: ActionConfig) {
     if(!config || !curEvent || !curComponentId) return
 
-    updateComponentProps(curComponentId, {
-      [curEvent.name]: {
-        actions: [
-          ...(curComponent?.props[curEvent.name]?.actions || []),
-          config
-        ]
-      }
-    })
+    if(curAction) {
+      // 只做修改
+      updateComponentProps(curComponentId, {
+        [curEvent.name]: {
+          actions: (curComponent?.props[curEvent.name]?.actions || []).map((item: ActionConfig, index: number) => {
+            return index === curActionIndex ? config : item
+          })
+        }
+      })
+    } else {
+      updateComponentProps(curComponentId, {
+        [curEvent.name]: {
+          actions: [
+            ...(curComponent?.props[curEvent.name]?.actions || []),
+            config
+          ]
+        }
+      })
+    }
+
+    setCurAction(undefined)
+    setCurActionIndex(-1)
     setActionModalOpen(false)
   }
 
@@ -122,8 +168,12 @@ export function ComponentEvent() {
     />
     <ActionModal
       visible={actionModalOpen}
+      action={curAction}
       handleOk={handleModelOk}
-      handleCancel={() => setActionModalOpen(false)}
+      handleCancel={() => {
+        setCurAction(undefined)
+        setActionModalOpen(false)
+      }}
     />
   </div>
 }
