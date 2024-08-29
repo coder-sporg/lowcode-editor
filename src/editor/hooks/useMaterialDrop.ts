@@ -1,27 +1,40 @@
 // import { message } from "antd"
 import { useDrop } from "react-dnd"
-import { useComponentsStore } from "../store/components"
+import { getComponentById, useComponentsStore } from "../store/components"
 import { useComponentConfigStore } from "../store/component-config"
 
+export interface ItemType {
+  type: string
+  dragType?: 'move' | 'add'
+  id: number
+}
+
 export function useMaterialDrop(accept: string[], id: number) {
-  const { addComponent } = useComponentsStore()
+  const { addComponent, components, deleteComponent } = useComponentsStore()
   const { componentConfig } = useComponentConfigStore()
 
   const [{ canDrop }, drop] = useDrop(() => ({
     accept,
-    drop: (item: { type: string }, monitor) => {
+    drop: (item: ItemType, monitor) => {
 
       const didDrop = monitor.didDrop()
       // 已经做拖拽的不处理
       if(didDrop) return
 
-      const config = componentConfig[item.type]
-      addComponent({
-        id: new Date().getTime(),
-        name: item.type,
-        desc: config.desc,
-        props: config.defaultProps
-      }, id)
+      if(item.dragType === 'move') {
+        const component = getComponentById(components, item.id)
+        deleteComponent(item.id)
+        addComponent(component!, id)
+      } else {
+        // add
+        const config = componentConfig[item.type]
+        addComponent({
+          id: new Date().getTime(),
+          name: item.type,
+          desc: config.desc,
+          props: config.defaultProps
+        }, id)
+      }
       // message.success(item.type)
     },
     collect: (monitor) => ({
